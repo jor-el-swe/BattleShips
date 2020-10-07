@@ -115,14 +115,13 @@ namespace BattleShips
                 if (noPlayers == 1 && playerNumber == 1)
                 {
                     //AI:s turn to shoot
-                    //AI just mimics player shooting for now
-                    playerShootAt = AIShootAT;
+                    //AI totally randoms guesses
+                    Random rnd = new Random((int)DateTime.Now.Ticks);
+                    playerShootAt = rnd.Next(0,99);
                 }
                 else
                 {
                     playerShootAt = getIntInput(gameInstance, playerNumber, 4);
-                    AIShootAT = playerShootAt;
-
                 }
 
                 //shoot at the other player's grid

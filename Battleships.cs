@@ -180,7 +180,15 @@ namespace BattleShips
                     Console.Write("Game over!");
                     Console.WriteLine();
                     Console.CursorLeft += 20;
-                    Console.Write($"Player{playerNumber + 1} wins!");
+                    if (playerNumber == 1 && AIcyclesOfThinking != 0)
+                    {
+                        Console.Write($"AI wins!");
+                    }
+                    else
+                    {
+                        Console.Write($"Player{playerNumber + 1} wins!");  
+                    }
+                    
                     break;
                 case 6:
                     Console.Write("Ship Sunk!");
@@ -349,7 +357,7 @@ namespace BattleShips
             {  
                 Console.SetCursorPosition (origoX + fieldDiff + deltaX*(startPos%10) + i * deltaX * incrementX * direction , origoY + deltaY*(startPos/10) + i * deltaY*incrementY* direction );
                 
-                if (!CheatMode && NumberOfPlayers == 1)
+                if (!CheatMode && playerNumber == 1)
                 {
                     
                 }
