@@ -41,6 +41,8 @@ namespace BattleShips
             int playerNumber = 0;
             int noPlacedShips = 0;
             
+            
+            //don't run this during development
             //Battleships.WelcomeToBattleships();
             //Console.Read();
             Battleships gameInstance = new Battleships();
@@ -48,7 +50,9 @@ namespace BattleShips
             gameInstance.CreateShips();
 
             //keep running until all 10 ships have been placed
-            for (var i = 0; i < 2; i++)
+            //don't run this during development
+            /*for (var i = 0; i < 2; i++)
+            
             {
                 noPlacedShips = 0;
                 playerNumber = i;
@@ -65,7 +69,7 @@ namespace BattleShips
                     if (outcome != 1) continue;
                     noPlacedShips++;
                 }
-            }
+            }*/
 
             
             //hide all ships

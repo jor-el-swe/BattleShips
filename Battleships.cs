@@ -13,6 +13,14 @@ namespace BattleShips
         private static int[] playersGrid = new int[200];
         private Ship[] playersShips = new Ship[10];
         
+        //starting position top/left in grid
+        const int origoX = 27;
+        const int origoY = 9;
+        
+        //increment between boxes in X and Y
+        const int deltaX = 7;
+        const int deltaY = 3;
+        
         public static void DrawGrid()
         {
             Console.Clear();
@@ -239,13 +247,9 @@ namespace BattleShips
         
         private bool DrawShipOnGrid(in int startPos, in int endPos, int size, int playerNumber)
         {
-            //starting position top/left in grid
-            const int origoX = 27;
-            const int origoY = 9;
+
             
-            //increment between boxes in X and Y
-            const int deltaX = 7;
-            const int deltaY = 3;
+ 
             
             //player1 or player 2 grid?
             int fieldDiff = playerNumber * 78;
@@ -356,16 +360,18 @@ namespace BattleShips
             {
                 playersGrid[shootingIndex] = 8;
                 //mark the position on the UI grid
-                markGridPosition(shootingIndex,8);
+                markGridPosition(playerSelection,playerNumber, 8);
             }
             
             
             return true;
         }
 
-        private void markGridPosition(in int shootingIndex, int i)
+        private void markGridPosition(in int playerSelection, int playerNumber,  int i)
         {
             //paint the grid at shootingIndex with marker i
+            Console.SetCursorPosition (origoX + (playerSelection%10 + playerNumber*100) * deltaX   , origoY + (playerSelection/10 ) * deltaY );
+            Console.Write(i);
         }
     }
     
