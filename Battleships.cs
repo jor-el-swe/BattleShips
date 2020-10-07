@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Transactions;
+
 
 namespace BattleShips
 {
@@ -10,6 +8,12 @@ namespace BattleShips
     {
         private static int cursorTopPosition;
         private static int cursorLeftPosition;
+
+        public int NumberOfPlayers { get; set; } = 0;
+        public bool CheatMode { get; set; } = false;
+
+        private int AIcyclesOfThinking = 0;
+
         //the grid will fit both players ships
         private static int[] playersGrid = new int[200];
         private Ship[] playersShips = new Ship[10];
@@ -24,7 +28,7 @@ namespace BattleShips
 
         const int delta12 = 78;
         
-        public static void DrawGrid()
+        public static void DrawGrid(int numberPlayers)
         {
             Console.Clear();
             string grid = @"
@@ -65,7 +69,16 @@ namespace BattleShips
             Console.SetCursorPosition (56, 4);
             Console.Write("Player1");
             Console.SetCursorPosition (134, 4);
-            Console.Write("Player2");
+
+            if (numberPlayers == 2)
+            {
+                Console.Write("Player2");
+            }
+            else
+            {
+                Console.Write("AI player");
+            }
+            
             Console.WriteLine();
             Console.WriteLine(grid);
             cursorLeftPosition = Console.CursorLeft;
@@ -107,7 +120,8 @@ namespace BattleShips
                                                                                      | '_ \| | | (_)   | |/ _ \| '__|____ / _ \ |           
                                                                                      | |_) | |_| |_    | | (_) | | |_____|  __/ |           
                                                                                      |_.__/ \__, (_)  _/ |\___/|_|        \___|_|           
-                                                                                            |___/    |__/                                   ";
+                                                                                            |___/    |__/                                   
+press enter to start";
             Console.ForegroundColor = System.ConsoleColor.DarkBlue;
             for (var i = 0; i < 10; i++)
             {
@@ -148,9 +162,11 @@ namespace BattleShips
                     Console.Write("Choose one of the ships above:");
                     break;
                 case 2:
+                    Console.CursorLeft += 10;
                     Console.Write("Choose a starting position (0-99):");
                     break;
                 case 3:
+                    Console.CursorLeft += 10;
                     Console.Write("Choose an ending position (0-99):");
                     break;
                 case 4:
@@ -177,6 +193,34 @@ namespace BattleShips
                     Console.CursorLeft += 10;
                     Console.Write($"Enter 1 or 2:");
                     break;
+                case 8:
+                    Console.CursorLeft += 10;
+                    Console.Write($"AI calculating possible ship placements...: {AIcyclesOfThinking}");
+                    Thread.Sleep(50);
+                    break;
+                case 9:
+                    Console.CursorLeft += 10;
+                    Console.WriteLine($"AI done placing ships in {AIcyclesOfThinking} cycles.");
+                    Console.CursorLeft += 20;
+                    Console.Write("Press enter to begin the battle.");
+                    break;
+                case 10:
+                    string answer = null;
+                    while (answer != "yes" && answer != "no")
+                    {
+                        Console.SetCursorPosition(cursorLeftPosition + 10, cursorTopPosition - 1);
+                        Console.Write("                                   ");
+                        Console.SetCursorPosition(cursorLeftPosition + 10, cursorTopPosition - 1);
+                        Console.Write("Do you want cheats (yes/no)?");
+                        answer = Console.ReadLine();
+                    }
+
+                    if (answer == "yes")
+                    {
+                        CheatMode = true;
+                    }
+                    break;
+                
                 
                 default:
                     break;
@@ -205,11 +249,13 @@ namespace BattleShips
 
         //outcome == 1 => all well, change player, outcome == 0 => failed for some reason
         //same player again
-        public int PlaceShip(in int playerSelection, in int playerNumber)
+        public int PlaceShip(in int shipSize, in int playerNumber)
         {
 
             //the ship we are about to place
             int currentShip = 999;
+            int startPos = 0;
+            int endPos = 0;
             
             //look in the player ship array if a ship of a correct size is still there
             //if not, return 0
@@ -217,7 +263,7 @@ namespace BattleShips
             {
                 if (!playersShips[i].IsPlaced)
                 {
-                    if (playersShips[i].Size == playerSelection)
+                    if (playersShips[i].Size == shipSize)
                     {
                         currentShip = i;
                         continue;
@@ -226,18 +272,25 @@ namespace BattleShips
             }
             //if we found a free ship, currentShip contains its index
             if(currentShip==999) return 0;
-            
-            //if the ship is there, ask for a starting and ending position
-            int startPos = Program.getIntInput(this, playerNumber, 2 );
 
-            int endPos = Program.getIntInput(this, playerNumber, 3 );
-
-
-            //if the position is not ok //return 0
-            //out of bounds
-            
-            //this should already have been taken care of in main program input reading 
-            //if ((startPos < 0 || endPos < 0) || (startPos > 99 || endPos > 99)) return 0;
+            if (NumberOfPlayers == 1 && playerNumber == 1)
+            {
+                //AI placer's turn
+                //random the positions
+                Random rnd = new Random((int)DateTime.Now.Ticks);
+                startPos = rnd.Next(0, 100);
+                endPos = rnd.Next(0, 100);
+                
+                //count how many times the AI has to try (just because I'm curious! :) )
+                AIcyclesOfThinking++;
+                PlayerInstructions(1,8);
+            }
+            else
+            {            
+                //if the ship is there, ask for a starting and ending position
+                startPos = Program.getIntInput(this, playerNumber, 2 );
+                endPos = Program.getIntInput(this, playerNumber, 3 );
+            }
             
             //if ship is not horizontal or vertical
             if ((startPos % 10 != endPos % 10) && (startPos / 10 != endPos/10)) return 0;
@@ -294,7 +347,16 @@ namespace BattleShips
             for (var i = 0; i < size; i++)
             {  
                 Console.SetCursorPosition (origoX + fieldDiff + deltaX*(startPos%10) + i * deltaX * incrementX * direction , origoY + deltaY*(startPos/10) + i * deltaY*incrementY* direction );
-                Console.Write(size);
+                
+                if (!CheatMode && NumberOfPlayers == 1)
+                {
+                    
+                }
+                else
+                {
+                    Console.Write(size);
+                }
+
 
                 //storing ships in grid seems to work. not tested for edge cases
                 playersGrid[startPos + (playerNumber)*100 + i*direction*incrementX + i*direction*incrementY*10] = size;

@@ -20,13 +20,6 @@ namespace BattleShips
         
         static void Main(string[] args)
         {
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Green; 
-            
-            Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);  
-            ShowWindow(ThisConsole, MAXIMIZE); 
-            
-            
             //17 - 2d arrays: Battleships! The Rules: Two players; 10x10 grid per player; Ships: sizes 5,4,3,2,2;
             //Ships may be placed vertically or horizontally; 
             //ships may not overlap and may not touch each other,
@@ -36,42 +29,62 @@ namespace BattleShips
             //Feedback “Ship sunk!”; 
             //Feedback “Player1 Wins” / “Player2 Wins”;
             //Random AI; Smart AI;
-
-
+            
+            InitConsoleWindow();
+            
             int playerNumber = 0;
             int noPlacedShips = 0;
             int noPlayers = 0;
-            
-            
-            //don't run this during development
-            Battleships.WelcomeToBattleships();
-            Console.Read();
-            Battleships gameInstance = new Battleships();
-            Battleships.DrawGrid();
-            gameInstance.CreateShips();
 
+            Battleships gameInstance = new Battleships();
+            
+            //draw first time for initialization
+            Battleships.DrawGrid(noPlayers);
+            
             while (noPlayers != 1 && noPlayers != 2)
             {
                 noPlayers = getIntInput(gameInstance, playerNumber, 7);
+                gameInstance.NumberOfPlayers = noPlayers;
             }
 
-            //keep running until all 10 ships have been placed
-            for (var i = 0; i < noPlayers; i++)
+            if (noPlayers == 1)
+            {
+                gameInstance.PlayerInstructions(playerNumber, 10);
+            }
+            //draw first time for correct AI/player labels
+            Battleships.DrawGrid(noPlayers);
+            gameInstance.CreateShips();
+
+
+
+            //place ships
+            //keep running until all 10 (or 5 player, 5  AI ) ships have been placed
+            for (var i = 0; i < 2; i++)
             {
                 //hide all ships
-                Battleships.DrawGrid();
+                Battleships.DrawGrid(noPlayers);
                 noPlacedShips = 0;
                 playerNumber = i;
                 
-                //change back to 5
+                //place 5 ships
                 while (noPlacedShips<5)
                 {
-
-                    var playerSelection = getIntInput(gameInstance, playerNumber, 1);
-                
-                    //if placement went well, change player
-                    var outcome = 0;
-                    outcome = gameInstance.PlaceShip(playerSelection, playerNumber);
+                    int shipSize = 0;
+                    
+                    //let AI random its ship's number
+                    if (noPlayers == 1  && playerNumber == 1)
+                    {
+                        Random rnd = new Random((int)DateTime.Now.Ticks);
+                        shipSize = rnd.Next(2, 6);
+                    }
+                    else
+                    {
+                        //only read input for human players
+                        shipSize = getIntInput(gameInstance, playerNumber, 1);
+                    }
+                    
+                    var outcome = gameInstance.PlaceShip(shipSize, playerNumber);
+                    
                     //outcome == 1 => all well, change player, outcome == 0 => failed for some reason
                     //same player again
                     if (outcome != 1) continue;
@@ -79,25 +92,43 @@ namespace BattleShips
                 }
             }
 
-            
+            gameInstance.PlayerInstructions(playerNumber, 9);
+            Console.ReadLine();
+
             //hide all ships
-            Battleships.DrawGrid();
+            Battleships.DrawGrid(noPlayers);
    
             
             playerNumber = 0;
             //until one player is out of ships
+            int playerShootAt = 0;
+            int AIShootAT = 0;
+            
             while (true)
             {
+                
                 if (gameInstance.AllShipsSunk(playerNumber))
                 {
                     break;
                 }
                 //take turns shooting at the other player
-                var playerSelection = getIntInput(gameInstance, playerNumber, 4);
+                if (noPlayers == 1 && playerNumber == 1)
+                {
+                    //AI:s turn to shoot
+                    //AI just mimics player shooting for now
+                    playerShootAt = AIShootAT;
+                }
+                else
+                {
+                    playerShootAt = getIntInput(gameInstance, playerNumber, 4);
+                    AIShootAT = playerShootAt;
+
+                }
+
                 //shoot at the other player's grid
                 int otherPlayer = playerNumber == 0 ? 1 : 0;
                 
-                if (gameInstance.ShootAtPosition(playerSelection, otherPlayer))
+                if (gameInstance.ShootAtPosition(playerShootAt, otherPlayer))
                 {
                     playerNumber++;
                     playerNumber &= 0x1;
@@ -108,6 +139,18 @@ namespace BattleShips
             
             
         }
+
+        private static void InitConsoleWindow()
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);  
+            ShowWindow(ThisConsole, MAXIMIZE); 
+            
+            Battleships.WelcomeToBattleships();
+            Console.Read();
+        }
+
         public static int getIntInput(in Battleships battleships, int playerNumber, int messageNumber )
         {
             bool test = false;
