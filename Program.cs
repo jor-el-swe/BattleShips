@@ -43,8 +43,8 @@ namespace BattleShips
             
             
             //don't run this during development
-            //Battleships.WelcomeToBattleships();
-            //Console.Read();
+            Battleships.WelcomeToBattleships();
+            Console.Read();
             Battleships gameInstance = new Battleships();
             Battleships.DrawGrid();
             gameInstance.CreateShips();
