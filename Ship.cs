@@ -2,8 +2,7 @@
 {
     public class Ship
     {
-        private int hits = 0;
-
+        public int Hits { get; set; } = 0;
         public bool IsSunk { get; set; } = false;
         public int Size { get; set; }
         public int StartPos { get; set; }

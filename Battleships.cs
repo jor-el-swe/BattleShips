@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Transactions;
 
@@ -20,6 +21,8 @@ namespace BattleShips
         //increment between boxes in X and Y
         const int deltaX = 7;
         const int deltaY = 3;
+
+        const int delta12 = 78;
         
         public static void DrawGrid()
         {
@@ -249,10 +252,9 @@ namespace BattleShips
         {
 
             
- 
-            
             //player1 or player 2 grid?
-            int fieldDiff = playerNumber * 78;
+            int fieldDiff = playerNumber * delta12;
+            ;
             
             //draw ship forward or backwards?
             int direction = 1;
@@ -361,17 +363,84 @@ namespace BattleShips
                 playersGrid[shootingIndex] = 8;
                 //mark the position on the UI grid
                 markGridPosition(playerSelection,playerNumber, 8);
+                return true;
             }
             
+            //if a ship is present there (it is, because is is neither 0 or 8)
+            int shipSize = 0;
+            //check which ship has been hit
+            for (var i = (0 + playerNumber * 5); i < (5 + playerNumber * 5); i++)
+            {
+                if (CheckIsInRange(playerSelection, playersShips[i].StartPos, playersShips[i].EndPos))
+                {
+                    //register a hit at ship
+                    playersShips[i].Hits++;
+                    shipSize = playersShips[i].Size;
+                    if (playersShips[i].Hits == playersShips[i].Size)
+                    {
+                        playersShips[i].IsSunk = true;
+                    }
+                }
+            }
             
+            //mark found ship at position
+            markGridPosition(playerSelection,playerNumber, shipSize);
+            //update grid to be 8
+            playersGrid[shootingIndex] = 8;
             return true;
+        }
+
+        private bool CheckIsInRange(in int playerSelection, in int startPos, in int endPos)
+        {
+            // check for x-axis
+            int startX = startPos % 10;
+            int endX = endPos % 10;
+            int diffX = endX - startX;
+            
+            //check for y-axis
+            int startY = startPos / 10;
+            int endY = endPos / 10;
+            int diffY = endY - startY;
+
+            if (diffX != 0)
+            {
+                //get the lowest of the two
+                int beginX = diffX > 0 ? startX: endX;
+                
+                if( (playerSelection % 10 >= beginX) && (playerSelection % 10 <= beginX + Math.Abs(diffX)) )
+                {
+                    //it is in X-range, also check that is has correct y-position
+                    if(playerSelection/10 == startY)
+                    return true;
+                }
+            }
+            
+ 
+            
+            if (diffY != 0)
+            {
+                //get the lowest of the two
+                int beginY = diffY > 0 ?  startY: endY;
+                
+                if( (playerSelection / 10 >= beginY) && (playerSelection / 10 <= beginY + Math.Abs(diffY)) )
+                {
+                    //it is in Y-range, also check that is has correct x-position
+                    if(playerSelection%10 == startX)
+                        return true;
+                }
+            }
+
+            //both x and y coords must be correct
+            return false;
         }
 
         private void markGridPosition(in int playerSelection, int playerNumber,  int i)
         {
+            Console.ForegroundColor = ConsoleColor.Blue;
             //paint the grid at shootingIndex with marker i
-            Console.SetCursorPosition (origoX + (playerSelection%10 + playerNumber*100) * deltaX   , origoY + (playerSelection/10 ) * deltaY );
+            Console.SetCursorPosition (origoX + playerNumber*delta12 +(playerSelection%10) * deltaX   , origoY + (playerSelection/10 ) * deltaY );
             Console.Write(i);
+            Console.ForegroundColor = ConsoleColor.Green;
         }
     }
     

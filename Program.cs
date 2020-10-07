@@ -50,12 +50,12 @@ namespace BattleShips
             gameInstance.CreateShips();
 
             //keep running until all 10 ships have been placed
-            //don't run this during development
-            /*for (var i = 0; i < 2; i++)
-            
+            for (var i = 0; i < 2; i++)
             {
                 noPlacedShips = 0;
                 playerNumber = i;
+                
+                //change back to 5
                 while (noPlacedShips<5)
                 {
 
@@ -69,7 +69,7 @@ namespace BattleShips
                     if (outcome != 1) continue;
                     noPlacedShips++;
                 }
-            }*/
+            }
 
             
             //hide all ships
@@ -86,15 +86,17 @@ namespace BattleShips
                 }
                 //take turns shooting at the other player
                 var playerSelection = getIntInput(gameInstance, playerNumber, 4);
-
-                if (gameInstance.ShootAtPosition(playerSelection, playerNumber))
+                //shoot at the other player's grid
+                int otherPlayer = playerNumber == 0 ? 1 : 0;
+                
+                if (gameInstance.ShootAtPosition(playerSelection, otherPlayer))
                 {
                     playerNumber++;
                     playerNumber &= 0x1;
                 }
             }
-            
-            gameInstance.PlayerInstructions(playerNumber, 5);
+            int otherWinner = playerNumber == 0 ? 1 : 0;
+            gameInstance.PlayerInstructions(otherWinner, 5);
             
             
         }
