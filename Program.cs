@@ -40,6 +40,7 @@ namespace BattleShips
 
             int playerNumber = 0;
             int noPlacedShips = 0;
+            int noPlayers = 0;
             
             
             //don't run this during development
@@ -49,8 +50,13 @@ namespace BattleShips
             Battleships.DrawGrid();
             gameInstance.CreateShips();
 
+            while (noPlayers != 1 && noPlayers != 2)
+            {
+                noPlayers = getIntInput(gameInstance, playerNumber, 7);
+            }
+
             //keep running until all 10 ships have been placed
-            for (var i = 0; i < 2; i++)
+            for (var i = 0; i < noPlayers; i++)
             {
                 //hide all ships
                 Battleships.DrawGrid();

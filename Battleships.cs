@@ -171,6 +171,12 @@ namespace BattleShips
                     Console.CursorLeft += 10;
                     Console.Write($"Well Done Player{playerNumber + 1}!");
                     break;
+                case 7: 
+                    Console.Write("How many players?");
+                    Console.WriteLine();
+                    Console.CursorLeft += 10;
+                    Console.Write($"Enter 1 or 2:");
+                    break;
                 
                 default:
                     break;
