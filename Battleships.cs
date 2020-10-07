@@ -121,7 +121,7 @@ namespace BattleShips
                                                                                      | |_) | |_| |_    | | (_) | | |_____|  __/ |           
                                                                                      |_.__/ \__, (_)  _/ |\___/|_|        \___|_|           
                                                                                             |___/    |__/                                   
-press enter to start";
+";
             Console.ForegroundColor = System.ConsoleColor.DarkBlue;
             for (var i = 0; i < 10; i++)
             {
@@ -176,9 +176,10 @@ press enter to start";
                     Console.Write($"Player{playerNumber + 1}:");
                     break;
                 case 5:
+                    Console.CursorLeft += 10;
                     Console.Write("Game over!");
                     Console.WriteLine();
-                    Console.CursorLeft += 10;
+                    Console.CursorLeft += 20;
                     Console.Write($"Player{playerNumber + 1} wins!");
                     break;
                 case 6:

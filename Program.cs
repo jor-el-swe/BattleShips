@@ -148,6 +148,7 @@ namespace BattleShips
             ShowWindow(ThisConsole, MAXIMIZE); 
             
             Battleships.WelcomeToBattleships();
+            Console.WriteLine("press enter to start");
             Console.Read();
         }
 
