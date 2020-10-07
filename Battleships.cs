@@ -222,10 +222,10 @@ namespace BattleShips
             if(currentShip==999) return 0;
             
             //if the ship is there, ask for a starting and ending position
-            this.PlayerInstructions(playerNumber, 2);
-            int startPos = Int32.Parse(Console.ReadLine());
-            this.PlayerInstructions(playerNumber, 3);
-            int endPos = Int32.Parse(Console.ReadLine());
+            int startPos = Program.getIntInput(this, playerNumber, 2 );
+
+            int endPos = Program.getIntInput(this, playerNumber, 3 );
+
 
             //if the position is not ok //return 0
             //out of bounds
@@ -263,7 +263,6 @@ namespace BattleShips
             
             //player1 or player 2 grid?
             int fieldDiff = playerNumber * delta12;
-            ;
             
             //draw ship forward or backwards?
             int direction = 1;
@@ -423,12 +422,10 @@ namespace BattleShips
                 {
                     //it is in X-range, also check that is has correct y-position
                     if(playerSelection/10 == startY)
-                    return true;
+                        return true;
                 }
             }
-            
- 
-            
+
             if (diffY != 0)
             {
                 //get the lowest of the two

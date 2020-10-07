@@ -102,7 +102,7 @@ namespace BattleShips
             
             
         }
-        private static int getIntInput(in Battleships battleships, int playerNumber, int messageNumber )
+        public static int getIntInput(in Battleships battleships, int playerNumber, int messageNumber )
         {
             bool test = false;
             int num = 0;
