@@ -52,6 +52,8 @@ namespace BattleShips
             //keep running until all 10 ships have been placed
             for (var i = 0; i < 2; i++)
             {
+                //hide all ships
+                Battleships.DrawGrid();
                 noPlacedShips = 0;
                 playerNumber = i;
                 

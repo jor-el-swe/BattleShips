@@ -28,7 +28,10 @@ namespace BattleShips
         {
             Console.Clear();
             string grid = @"
-                           A      B      C      D      E      F      G      H      I      J              A      B      C      D      E      F      G      H      I      J                                                                               
+                           0      1      2      3      4      5      6      7      8      9              0      1      2      3      4      5      6      7      8      9                                                                               
+                         _____  _____  _____  _____  _____  _____  _____  _____  _____  _____          _____  _____  _____  _____  _____  _____  _____  _____  _____  _____ 
+                    0   |     ||     ||     ||     ||     ||     ||     ||     ||     ||     |    0   |     ||     ||     ||     ||     ||     ||     ||     ||     ||     |
+                        |_____||_____||_____||_____||_____||_____||_____||_____||_____||_____|        |_____||_____||_____||_____||_____||_____||_____||_____||_____||_____|
                          _____  _____  _____  _____  _____  _____  _____  _____  _____  _____          _____  _____  _____  _____  _____  _____  _____  _____  _____  _____ 
                     1   |     ||     ||     ||     ||     ||     ||     ||     ||     ||     |    1   |     ||     ||     ||     ||     ||     ||     ||     ||     ||     |
                         |_____||_____||_____||_____||_____||_____||_____||_____||_____||_____|        |_____||_____||_____||_____||_____||_____||_____||_____||_____||_____|
@@ -55,9 +58,6 @@ namespace BattleShips
                         |_____||_____||_____||_____||_____||_____||_____||_____||_____||_____|        |_____||_____||_____||_____||_____||_____||_____||_____||_____||_____|
                          _____  _____  _____  _____  _____  _____  _____  _____  _____  _____          _____  _____  _____  _____  _____  _____  _____  _____  _____  _____ 
                     9   |     ||     ||     ||     ||     ||     ||     ||     ||     ||     |    9   |     ||     ||     ||     ||     ||     ||     ||     ||     ||     |
-                        |_____||_____||_____||_____||_____||_____||_____||_____||_____||_____|        |_____||_____||_____||_____||_____||_____||_____||_____||_____||_____|
-                         _____  _____  _____  _____  _____  _____  _____  _____  _____  _____          _____  _____  _____  _____  _____  _____  _____  _____  _____  _____ 
-                    10  |     ||     ||     ||     ||     ||     ||     ||     ||     ||     |    10  |     ||     ||     ||     ||     ||     ||     ||     ||     ||     |
                         |_____||_____||_____||_____||_____||_____||_____||_____||_____||_____|        |_____||_____||_____||_____||_____||_____||_____||_____||_____||_____|
                                                                                                                                                                             
 ";
@@ -123,8 +123,9 @@ namespace BattleShips
         {
             //first clear the lines for the messages:
             Console.SetCursorPosition(cursorLeftPosition + 10, cursorTopPosition - 1);
-            Console.WriteLine("                                                           ");
-            Console.WriteLine("                                                           ");
+            Console.WriteLine("                                                                    ");
+            Console.WriteLine("                                                                    ");
+            Console.WriteLine("                                                                    ");
             
             
             Console.SetCursorPosition(cursorLeftPosition + 10, cursorTopPosition - 1);
@@ -142,7 +143,9 @@ namespace BattleShips
                     }
                     Console.WriteLine();
                     Console.CursorLeft += 10;
-                    Console.Write($"Player{playerNumber + 1}, place your ships:");
+                    Console.WriteLine($"Player{playerNumber + 1}, place your ships.");
+                    Console.CursorLeft += 10;
+                    Console.Write("Choose one of the ships above:");
                     break;
                 case 2:
                     Console.Write("Choose a starting position (0-99):");
@@ -161,6 +164,12 @@ namespace BattleShips
                     Console.WriteLine();
                     Console.CursorLeft += 10;
                     Console.Write($"Player{playerNumber + 1} wins!");
+                    break;
+                case 6:
+                    Console.Write("Ship Sunk!");
+                    Console.WriteLine();
+                    Console.CursorLeft += 10;
+                    Console.Write($"Well Done Player{playerNumber + 1}!");
                     break;
                 
                 default:
@@ -379,6 +388,9 @@ namespace BattleShips
                     if (playersShips[i].Hits == playersShips[i].Size)
                     {
                         playersShips[i].IsSunk = true;
+                        
+                        PlayerInstructions(playerNumber, 6);
+                        
                     }
                 }
             }
@@ -436,7 +448,11 @@ namespace BattleShips
 
         private void markGridPosition(in int playerSelection, int playerNumber,  int i)
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
+            //mark hits on ships with red
+            //mark misses with blue
+            if( i == 8) Console.ForegroundColor = ConsoleColor.Blue;
+            else Console.ForegroundColor = ConsoleColor.Red;
+            
             //paint the grid at shootingIndex with marker i
             Console.SetCursorPosition (origoX + playerNumber*delta12 +(playerSelection%10) * deltaX   , origoY + (playerSelection/10 ) * deltaY );
             Console.Write(i);
